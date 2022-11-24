@@ -41,7 +41,7 @@ public:
 
 
 
-
+//test commit
 int main() {
     Graph MyGraph(4);
 
@@ -52,6 +52,7 @@ int main() {
     cout << endl;
 
     MyGraph.SetElement(5, 4, 100);
+    MyGraph.SetElement(5, 8, 100);
     MyGraph.PrintValues();
     cout << endl;
 
