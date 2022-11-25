@@ -1,4 +1,8 @@
 ﻿  Coursera_Cpp_02.cpp
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(65,38): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(66,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(106,38): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(107,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(167,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(168,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(182,41): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Coursera_Cpp_02\Coursera_Cpp_02.cpp(205): warning C4715: 'Dijspa::CalculateSPA': non tutti i percorsi di controllo restituiscono un valore
   Coursera_Cpp_02.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_02\Debug\Coursera_Cpp_02.exe
