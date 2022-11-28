@@ -1,0 +1,55 @@
+Peer-graded Assignment: Homework 2: Implement Dijkstra's Algorithm
+Graziano Governatori
+
+Source files:
+ - Coursera_Cpp_02.cpp
+
+Toolchain:
+ - Visual Studio C++, 2019
+ - console application
+
+Assignment description:
+ as stated in "my submission",
+  "Graph algorithms and graph representation are a critical tool in CS. We want to create a graph as an ADT (Abstract Data Type) using C++ classes. The basic problem will be to write Dijkstra’s algorithm as a class member function (method in OO speak). You should already know Dijkstra’s algorithm for the shortest path problem from prior experience, but it will be reviewed in class. It is the basis for many route calculations and optimizations programs. 
+   There are 2 basic implementations used for graphs – one is edge lists, and the other is connectivity matrices. You can decide which to use, but comment on your choice. 
+   Basic problem:  Write a set of constructors for declaring and initializing a graph. An edge will have a positive cost that is its distance. Have a procedure that produces a randomly generated set of edges with positive distances.  Assume the graphs are undirected. The random graph procedure should have edge density as a parameter and distance range as a parameter. So a graph whose density is 0.1 would have 10% of its edges picked at random and its edge distance would be selected at random from the distance range. The procedure should run through all possible undirected edges, say (i,j) and place the edge in the graph if a random probability calculation is less than the density. Compute for a set of randomly generated graphs an average shortest path.
+   Turn in:  Printout of program, 200 words on what you learned, and output showing the average path length calculation. Use densities: 20% and 40% on a graph of 50 nodes with a distance range of 1.0 to 10.0.   To get an average path length, compute the 49 paths: 1 to 2, 1 to 3, 1 to 4, …, 1 to 50. "
+
+What I've learned:
+ - graph theory
+ - how to represent a graph
+ - use of std::vector
+ - organizing project in classes
+ - model the problem
+
+Project description
+ I created a class Graph to store the graph as a matrix (vector of vector).  This implementation
+ is probably not the most optimized, but it was chosen to practice with vectors
+ Nodes are identified by int numbers, always starting from 0, and always including all numbers fro 0 to (size - 1)
+ i.e. we cannot have say a graph with nodes {0, 3, 4, 8}, nor {1, 2, 3}.
+ I defined the distance between nodes as a custom type, "EdgesType", to be able quickly to change it from float to double, or even int
+
+ Dijkstra algorithm computation is in a separate class
+
+ Montecarlo is performed as distances from a node (I took node "0" as starting point) from all the others
+
+ Mind the constants at the beginning of the file, "Gr_print_steps" will print all the intermediate calculations, but with 50 nodes will lead to a long execution time!
+
+
+Result
+ - with a densityt of 0.4, I got following results
+   RUN 1: average distance  5.29243
+   RUN 1: average distance  5.86273
+   RUN 1: average distance  6.65048
+   RUN 1: average distance  7.71895
+   RUN 1: average distance  5.31833
+
+ - with a densityt of 0.2, I got following results
+   RUN 1: average distance  8.69594
+   RUN 1: average distance 12.1319
+   RUN 1: average distance 11.2815
+   RUN 1: average distance  9.09754
+   RUN 1: average distance 14.5284
+
+Comment on result:
+ as expected, a greater density leads to shorter distances

@@ -115,7 +115,7 @@ int main() {
 
     //Assignment - B
     //  set graph randomly, with given density and range
-    MyGraph.RandomPopulate(0.4, 1.0, 10.0); 
+    MyGraph.RandomPopulate(0.2, 1.0, 10.0); 
 
     MyGraph.PrintValues();
     cout << endl;
@@ -288,7 +288,6 @@ EdgesType Dijspa::CalculateSPA(int sourceNode, int destNode) {
         }
 
         if (idxNodeToAdd != Gr_NoNode) {
-            //TODO: replace by cc
             DijkstraListEl myEl(openSet[idxNodeToAdd].nodeId , openSet[idxNodeToAdd].previousNodeId, openSet[idxNodeToAdd].edgeCost);
             closedSet.push_back(myEl);
             openSet.erase(openSet.begin() + idxNodeToAdd);
