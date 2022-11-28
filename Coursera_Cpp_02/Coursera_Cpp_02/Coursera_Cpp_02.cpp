@@ -36,11 +36,22 @@ public:
         for (int iter = 0; iter < paramSize; iter++) {
             graphMatrix[iter].resize(paramSize);
         }
+        //initialize to 0 the costs from a node to itself, infinite the cost from a node to any other node
+        for (int outerIter = 0; outerIter < this->size; outerIter++) {
+            for (int innerIter = 0; innerIter < this->size; innerIter++) {
+                if (outerIter == innerIter) {
+                    graphMatrix[outerIter][innerIter] = 0;
+                }
+                else {
+                    graphMatrix[outerIter][innerIter] = Gr_Infinity;
+                }
+            }
+        }
     }
     ~Graph() = default;
 private:
     int size = 1;
-    matrix graphMatrix = { {0, 1}, {2, 3 } };
+    matrix graphMatrix = { {0, 0}, {0, 0 } };
 public:
     int GetSize() { return this->size; }
     void PrintValues();
@@ -78,25 +89,32 @@ void _print_closed_list(std::vector<DijkstraListEl>& list);
 
 //test commit
 int main() {
-    Graph MyGraph(4);
+    Graph MyGraph(7);
+
+    MyGraph.SetElement(0, 1, 1);
+    MyGraph.SetElement(0, 2, 1);
+    MyGraph.SetElement(3, 1, 2);
+    MyGraph.SetElement(3, 2, 3);
+    MyGraph.SetElement(2, 4, 2);
+    MyGraph.SetElement(4, 5, 1);
+    MyGraph.SetElement(3, 5, 10);
+    MyGraph.SetElement(3, 6, 20);
+    MyGraph.SetElement(5, 6,  5);
+
 
     MyGraph.PrintValues();
     cout << endl;
-    MyGraph.Resize(8);
-    MyGraph.PrintValues();
-    cout << endl;
-
-    MyGraph.SetElement(5, 4, 100);
-    MyGraph.SetElement(5, 8, 100);
-    MyGraph.PrintValues();
-    cout << endl;
-
 
     Dijspa Algo( MyGraph, MyGraph.GetSize());
-    cout << endl << "distance btwn nodes: " << Algo.CalculateSPA(5, 3);
-
-
-
+    int start, dest;
+    start = 0;
+    dest = 6;
+    auto distance = Algo.CalculateSPA(start, dest);
+    if (distance < Gr_Infinity) {
+        cout << endl << "distance btwn nodes: " << distance;
+    } else {
+        cout << endl << "not possible to go from node " << start << " to node " << dest;
+    }
 }
 
 
@@ -105,7 +123,11 @@ int main() {
 void Graph::PrintValues() {
     for (int outerIter = 0; outerIter< graphMatrix.size(); outerIter++) {
         for (int iter = 0; iter < graphMatrix.size(); iter++) {
-            cout << "\t[" << outerIter << "][" << iter << "]: " << graphMatrix[outerIter][iter];
+            if (graphMatrix[outerIter][iter] == Gr_Infinity) {
+                cout << "\t[" << outerIter << "][" << iter << "]: " << "-";
+            } else {
+                cout << "\t[" << outerIter << "][" << iter << "]: " << graphMatrix[outerIter][iter];
+            }
         }
         cout << endl;
     }
@@ -201,7 +223,13 @@ EdgesType Dijspa::CalculateSPA(int sourceNode, int destNode) {
 
     } while ((openSet.size() > 0) && (idxNodeToAdd != Gr_NoNode));
 
-
+    for (auto target : closedSet) {
+        if (target.nodeId == destNode) {
+            return target.edgeCost;
+        }
+    }
+    //in case destination node is not in closed set => return an infinite cost
+    return Gr_Infinity;
 }
 
 
