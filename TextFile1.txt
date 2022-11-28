@@ -1,6 +1,6 @@
 //test commit
 /*   Convert this program to C++
-
+* test
 *   change to C++ io
 
 *   change to one line comments
