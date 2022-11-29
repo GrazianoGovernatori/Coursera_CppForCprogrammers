@@ -1,0 +1,7 @@
+﻿  Coursera_Cpp_03.cpp
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(169,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(170,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(336,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(337,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(351,41): warning C4018: '<': errata corrispondenza tra signed e unsigned
+  Coursera_Cpp_03.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Debug\Coursera_Cpp_03.exe
