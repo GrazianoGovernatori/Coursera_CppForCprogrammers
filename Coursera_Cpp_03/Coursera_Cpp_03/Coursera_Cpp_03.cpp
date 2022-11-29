@@ -70,7 +70,7 @@ private:
     matrix graphMatrix = { {0, 0}, {0, 0 } };
 public:
     int GetSize() { return this->size; }
-    void PrintValues();
+    void PrintValues(bool printParenthesis = true);
     void Resize(int newSize);
     void SetElement(int nodeA, int nodeB, EdgesType edgeValue);
     EdgesType GetEdgeDistance(int nodeA, int nodeB) { return graphMatrix[nodeA][nodeB]; }
@@ -101,6 +101,41 @@ private:
     int destNode;
 };
 
+//class to store each element, that will make up a list, resulting of MST algorithm
+class EdgesElement {
+public:
+    EdgesElement(int a, int b, EdgesType c) : nodeA(a), nodeB(b), edgeCost(c) {}
+    EdgesElement() {}
+public:
+    int nodeA;
+    int nodeB;
+    EdgesType edgeCost;
+};
+
+class JarnikPrimMST {
+private:
+    std::vector<EdgesElement> fullGraph = {};
+    std::vector<EdgesElement> mstGraph = {};
+
+public:
+    void ResetGraph() {
+        fullGraph.resize(0);
+    }
+
+    void AddElement(EdgesElement el) {
+        fullGraph.push_back(el);
+    }
+
+    EdgesType ComputeMST();
+
+    void PrintGraphs();
+
+    bool PopulateFromFile(string path);
+
+    int GetGraphSize() { return fullGraph.size(); };
+    
+};
+
 //utility functions
 void _print_open_list(std::vector<DijkstraListEl>& list);
 void _print_closed_list(std::vector<DijkstraListEl>& list);
@@ -118,8 +153,13 @@ int main() {
     //MyGraph.RandomPopulate(0.2, 1.0, 10.0);
     MyGraph.PopulateFromFile("cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt");
 
-    MyGraph.PrintValues();
+    MyGraph.PrintValues(false);
     cout << endl;
+
+    JarnikPrimMST MyJPMST;
+
+    MyJPMST.AddElement()
+
 
     //Assignment - C
     //  evaluate all possible distances, 
@@ -165,14 +205,24 @@ int main() {
 //-------------------------------------------------------------------------------------------------
 // * * * member functions * * * //
 //Graph class - Member functions
-void Graph::PrintValues() {
+void Graph::PrintValues(bool showParenthesis) {
     for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
         for (int iter = 0; iter < graphMatrix.size(); iter++) {
-            if (graphMatrix[outerIter][iter] == Gr_Infinity) {
-                cout << "\t[" << outerIter << "][" << iter << "]: " << "-";
+            if (showParenthesis) {
+                if (graphMatrix[outerIter][iter] == Gr_Infinity) {
+                    cout << "\t[" << outerIter << "][" << iter << "]: " << "-";
+                }
+                else {
+                    cout << "\t[" << outerIter << "][" << iter << "]: " << graphMatrix[outerIter][iter];
+                }
             }
             else {
-                cout << "\t[" << outerIter << "][" << iter << "]: " << graphMatrix[outerIter][iter];
+                if (graphMatrix[outerIter][iter] == Gr_Infinity) {
+                    cout << "\t" << "-";
+                }
+                else {
+                    cout << "\t" << (int)graphMatrix[outerIter][iter];
+                }
             }
         }
         cout << endl;
@@ -262,15 +312,13 @@ bool Graph::PopulateFromFile(string path) {
         return false;
     }
 
-    //set dimension to be "number of nodes"
-    this->Resize(localNumberOfNodes);
     //reset graph matrix to be all zeros on diagonal, infinite otherwise
     this->ResetGraph();
 
     int nodeA, nodeB;
     EdgesType edgeCost;
     //for readability, we split in lines
-    for (int iter = 1; iter < numberOfEdges; /*do not increment here...*/) {
+    for (int iter = 1; iter < (fileRawData.size() - 1); /*do not increment here...*/) {
         nodeA = std::stoi(fileRawData[iter]);
         iter++;
         nodeB = std::stoi(fileRawData[iter]);
@@ -376,6 +424,70 @@ EdgesType Dijspa::CalculateSPA(int sourceNode, int destNode) {
     //in case destination node is not in closed set => return an infinite cost
     return Gr_Infinity;
 }
+
+
+EdgesType JarnikPrimMST::ComputeMST() {
+
+    std::vector<int> nodesReached = {};
+
+    return Gr_Infinity; //no MST found!
+}
+
+void JarnikPrimMST::PrintGraphs() {
+
+}
+
+
+bool JarnikPrimMST::PopulateFromFile(string path) {
+    //ifstream graphInputFile("C:\\Users\\ggovernatori\\source\\repos\\Coursera_Cpp_03\\Coursera_Cpp_03\\Debug\\cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt"); //file in same directory as executable
+    ifstream graphInputFile(path); //file in VS project directory 
+    //"cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt"
+    istream_iterator<string> start(graphInputFile), end;
+    vector<string> fileRawData(start, end);
+
+    if (fileRawData.size() == 0) {
+        return false; //error in file acquisition
+    }
+    int numberOfEdges = (fileRawData.size() - 1) / 3;
+
+    int localNumberOfNodes;
+    //load number of nodes - example on typical check on inputs
+    try {
+        localNumberOfNodes = std::stoi(fileRawData[0]);
+    }
+    catch (std::invalid_argument const& exc) {
+        std::cout << "invalid_argument: " << exc.what() << '\n';
+    }
+    catch (std::out_of_range const& exc) {
+        std::cout << "out_of_range: " << exc.what() << '\n';
+    }
+
+    if (localNumberOfNodes > Gr_Max_Number_Of_Nodes) {
+        std::cout << "too many nodes!";
+        return false;
+    }
+
+    //reset graph matrix to be all zeros on diagonal, infinite otherwise
+    this->ResetGraph();
+
+    int nodeA, nodeB;
+    EdgesType edgeCost;
+    EdgesElement elToAdd;
+    //for readability, we split in lines
+    for (int iter = 1; iter < (fileRawData.size() - 1); /*do not increment here...*/) {
+        elToAdd.nodeA = std::stoi(fileRawData[iter]);
+        iter++;
+        elToAdd.nodeB = std::stoi(fileRawData[iter]);
+        iter++;
+        elToAdd.edgeCost = static_cast<EdgesType>(std::stoi(fileRawData[iter]));
+        iter++;
+        AddElement(elToAdd);
+    }
+    return false;
+}
+
+
+
 
 //-------------------------------------------------------------------------------------------------
 // * * * utility functions * * * //
