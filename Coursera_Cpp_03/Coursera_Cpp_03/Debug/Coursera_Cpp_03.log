@@ -1,8 +1,13 @@
 ﻿  Coursera_Cpp_03.cpp
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(201,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(202,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(315,29): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(378,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(379,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(393,41): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(165,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(166,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(277,29): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(340,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(341,45): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(355,41): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(424,34): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(478,29): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(474,16): warning C4101: 'nodeB': variabile locale senza riferimenti
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(474,9): warning C4101: 'nodeA': variabile locale senza riferimenti
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Coursera_Cpp_03\Coursera_Cpp_03.cpp(475,15): warning C4101: 'edgeCost': variabile locale senza riferimenti
   Coursera_Cpp_03.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_03\Debug\Coursera_Cpp_03.exe

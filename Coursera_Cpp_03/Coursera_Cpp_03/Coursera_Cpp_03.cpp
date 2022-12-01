@@ -8,7 +8,6 @@
 #include <ctime>
 #include <string>
 
-
 using namespace std;
 
 //-------------------------------------------------------------------------------------------------
@@ -116,8 +115,11 @@ class JarnikPrimMST {
 private:
     std::vector<EdgesElement> fullGraph = {};
     std::vector<EdgesElement> mstGraph = {};
+    int numOfNodes;
 
 public:
+    JarnikPrimMST(string path);
+
     void ResetGraph() {
         fullGraph.resize(0);
     }
@@ -126,14 +128,12 @@ public:
         fullGraph.push_back(el);
     }
 
-    EdgesType ComputeMST();
+    EdgesType ComputeMST(int startingNode);
 
     void PrintGraphs();
 
-    bool PopulateFromFile(string path);
-
-    int GetGraphSize() { return fullGraph.size(); };
-    
+    int GetGraphSize() { return numOfNodes; };
+    void SetGraphSize(int newSize) { numOfNodes = newSize; };
 };
 
 //utility functions
@@ -144,63 +144,19 @@ void _print_closed_list(std::vector<DijkstraListEl>& list);
 // * * * program main * * * //
 //-------------------------------------------------------------------------------------------------
 int main() {
-    //Assignment - A
-    //  initialize the graph
-    Graph MyGraph(Gr_Size);
+    //constructor will load data from file
+    JarnikPrimMST MyJPMST("cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt");
 
-    //Assignment - B
-    //  set graph randomly, with given density and range
-    //MyGraph.RandomPopulate(0.2, 1.0, 10.0);
-    MyGraph.PopulateFromFile("cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt");
+    //set node "0" as starting node (can be whatever)
+    auto totalCost = MyJPMST.ComputeMST(0);
+    MyJPMST.PrintGraphs();
 
-    MyGraph.PrintValues(false);
-    cout << endl;
-
-    JarnikPrimMST MyJPMST;
-
-    MyJPMST.AddElement()
-
-
-    //Assignment - C
-    //  evaluate all possible distances, 
-    // To get an average path length, compute the 49 paths, 1 to 2, 1 to 3, 1 to 4, …, 1 to 50.
-    //we need 49 elements
-    cout << endl;
-    std::vector<EdgesType> distancesCaseAlpha(0);
-    EdgesType localDistance;
-    Dijspa Algo(MyGraph, MyGraph.GetSize());
-    for (int iterator = 0; iterator < (MyGraph.GetSize() - 1); iterator++) {
-        localDistance = Algo.CalculateSPA(0, (iterator + 1));
-        if (localDistance < Gr_Infinity) {
-            distancesCaseAlpha.push_back(localDistance);
-            if (Gr_print_steps) {
-                cout << localDistance << endl;
-            }
-        }
-        else {
-            if (Gr_print_steps) {
-                cout << "INFINITY" << endl;
-            }
-        }
+    if (totalCost < Gr_Infinity) {
+        cout << endl << "Total cost of MST: " << totalCost << endl;
+    } else {
+        cout << endl << "Error in computing MST!" << endl;
     }
-
-    //Assignment - D
-    //evaluate mean of distances
-    if (distancesCaseAlpha.size() == 0) {
-        cout << "Graph not connected!";
-    }
-    else {
-        double avgPathDistance = 0;
-        for (auto& x : distancesCaseAlpha) {
-            avgPathDistance += (double)x;
-        }
-        avgPathDistance /= distancesCaseAlpha.size();
-        cout << "Average distance in paths: " << avgPathDistance;
-    }
-    cout << endl;
 }
-
-
 
 //-------------------------------------------------------------------------------------------------
 // * * * member functions * * * //
@@ -344,7 +300,7 @@ void Graph::ResetGraph() {
     }
 }
 
-//Dijspa class - Mamber functions
+//Dijspa class - Member functions
 EdgesType Dijspa::CalculateSPA(int sourceNode, int destNode) {
     if (this->numberOfNodes < 1) {
         return Gr_Infinity;
@@ -426,28 +382,73 @@ EdgesType Dijspa::CalculateSPA(int sourceNode, int destNode) {
 }
 
 
-EdgesType JarnikPrimMST::ComputeMST() {
+EdgesType JarnikPrimMST::ComputeMST(int startingNode) {
 
     std::vector<int> nodesReached = {};
 
-    return Gr_Infinity; //no MST found!
+    mstGraph.resize(0);
+
+    nodesReached.push_back(startingNode);
+
+    EdgesType localCost = Gr_Infinity;
+    EdgesElement localElem;
+
+    do {
+        localElem.edgeCost = Gr_Infinity;
+        for (auto x : nodesReached) {
+            for (auto& y : fullGraph) {
+                if ((y.nodeA == x) || (y.nodeB == x)) { //if node contains a node of the temporary MST...
+                    if ((std::find(nodesReached.begin(), nodesReached.end(), y.nodeA) == nodesReached.end()) ||   //if one of the 2 nodes are not reached by MST...
+                        (std::find(nodesReached.begin(), nodesReached.end(), y.nodeB) == nodesReached.end()))
+                    {
+                        if (y.edgeCost < localElem.edgeCost) {
+                            localElem = y;  //assign new edge as possible new element...
+                        }
+                    }
+                }
+            }
+        }
+        if (localElem.edgeCost != Gr_Infinity) {
+            //we have another edge...
+            if (std::find(nodesReached.begin(), nodesReached.end(), localElem.nodeA) == nodesReached.end()) {
+                nodesReached.push_back(localElem.nodeA);
+            }
+            else {
+                nodesReached.push_back(localElem.nodeB);
+            }
+
+            mstGraph.push_back(localElem);
+        } else {
+            return Gr_Infinity; //no MST found!
+        }
+    } while (nodesReached.size() < GetGraphSize());
+
+    EdgesType totalMstCost = 0;
+    for (auto& el : mstGraph) {
+        totalMstCost += el.edgeCost;
+    }
+    return totalMstCost;
 }
 
 void JarnikPrimMST::PrintGraphs() {
-
+    cout << endl << "Original Graph: " << endl;
+    for (auto &el : fullGraph) {
+        cout << "   " << el.nodeA << ", " << el.nodeB << ", " << el.edgeCost << endl;
+    }
+    cout << endl << "MST: " << endl;
+    for (auto &el : mstGraph) {
+        cout << "   " << el.nodeA << ", " << el.nodeB << ", " << el.edgeCost << endl;
+    }
 }
 
 
-bool JarnikPrimMST::PopulateFromFile(string path) {
-    //ifstream graphInputFile("C:\\Users\\ggovernatori\\source\\repos\\Coursera_Cpp_03\\Coursera_Cpp_03\\Debug\\cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt"); //file in same directory as executable
+JarnikPrimMST::JarnikPrimMST(string path) {
     ifstream graphInputFile(path); //file in VS project directory 
     //"cplusplus4c_homeworks_Homework3_SampleTestData_mst_data.txt"
     istream_iterator<string> start(graphInputFile), end;
     vector<string> fileRawData(start, end);
 
-    if (fileRawData.size() == 0) {
-        return false; //error in file acquisition
-    }
+    //we do not check for file consistency, only some try-catch to alert about errors
     int numberOfEdges = (fileRawData.size() - 1) / 3;
 
     int localNumberOfNodes;
@@ -464,11 +465,11 @@ bool JarnikPrimMST::PopulateFromFile(string path) {
 
     if (localNumberOfNodes > Gr_Max_Number_Of_Nodes) {
         std::cout << "too many nodes!";
-        return false;
     }
 
     //reset graph matrix to be all zeros on diagonal, infinite otherwise
     this->ResetGraph();
+    this->SetGraphSize(localNumberOfNodes);
 
     int nodeA, nodeB;
     EdgesType edgeCost;
@@ -483,10 +484,7 @@ bool JarnikPrimMST::PopulateFromFile(string path) {
         iter++;
         AddElement(elToAdd);
     }
-    return false;
 }
-
-
 
 
 //-------------------------------------------------------------------------------------------------
