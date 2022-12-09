@@ -1,0 +1,9 @@
+﻿  Coursera_Cpp_04.cpp
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(128,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(129,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(139,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(147,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(156,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(158,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(192): warning C4715: 'HexBoard::PlayerMove': non tutti i percorsi di controllo restituiscono un valore
+  Coursera_Cpp_04.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Debug\Coursera_Cpp_04.exe
