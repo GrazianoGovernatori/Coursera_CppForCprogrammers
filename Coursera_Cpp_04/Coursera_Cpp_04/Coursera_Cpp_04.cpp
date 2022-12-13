@@ -13,6 +13,17 @@ using namespace std;
 //-------------------------------------------------------------------------------------------------
 // * * * type definition, define here all types used for Hex assignment * * * //
 
+//we define a type for the weights on edges;
+//can be int, float, double
+//typedef int EdgesType;
+typedef int EdgesType;
+
+//-------------------------------------------------------------------------------------------------
+// * * * constants - collect here all const values and identifiers * * * //
+//we use a conventional value to identify infinity
+constexpr EdgesType Gr_Infinity = std::numeric_limits<EdgesType>::max();
+
+
 enum class HBPlayerElem{
     EMPTY = 0,
     BLUE,
@@ -31,11 +42,24 @@ typedef std::vector< std::vector<HBPlayerElem> > matrix;
 
 //-------------------------------------------------------------------------------------------------
 // * * * constants - collect here all const values and identifiers * * * //
-constexpr int Gr_MinBoardSize = 7;
+constexpr int Gr_MinBoardSize = 4;
 constexpr int Gr_MaxBoardSize = 11;
+
 
 //-------------------------------------------------------------------------------------------------
 // * * * classes definition * * * //
+
+//class to store each element, that will make up a list, resulting of MST algorithm
+class EdgesElement {
+public:
+    EdgesElement(int a, int b, EdgesType c) : nodeA(a), nodeB(b), edgeCost(c) {}
+    EdgesElement() {}
+public:
+    int nodeA;
+    int nodeB;
+    EdgesType edgeCost;
+
+};
 
 //class to store graph
 class HexBoard {
@@ -43,9 +67,9 @@ public:
     HexBoard(int paramSize);
     ~HexBoard() = default;
 private:
-    int size = 7;
+    int size = 4;
     matrix graphMatrix;
-    std::vector<edgeType> playerGraph[2];
+    std::vector<EdgesElement> playerGraph[2];
 public:
     void ResetBoard(void);
     int GetSize() { return this->size; }
@@ -59,9 +83,39 @@ public:
     void ResetPlayerGraph(HBPlayerElem player);
     int GetNodeId(int nodaA_x, int nodeA_y);
     void AddToPlayerGraph(HBPlayerElem player, int nodeA, int nodeB);
+    void PrintPlayerGraph(HBPlayerElem player);
+    bool PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph);
+    int GetNumOfNodes(void) { return size * size; }
+
 };
 
 
+class JarnikPrimMST {
+private:
+    std::vector<EdgesElement> & fullGraph;
+    int numOfNodes;
+
+public:
+    std::vector<EdgesElement> mstGraph = {};
+
+public:
+    JarnikPrimMST(std::vector<EdgesElement>& fullGraphRef, int numOfNodes);
+
+    void ResetGraph() {
+        //fullGraph.resize(0);
+    }
+
+    void AddElement(EdgesElement el) {
+        //fullGraph.push_back(el);
+    }
+
+    EdgesType ComputeMST(int startingNode);
+
+    void PrintGraphs();
+
+    int GetGraphSize() { return numOfNodes; };
+    void SetGraphSize(int newSize) { numOfNodes = newSize; };
+};
 
 //-------------------------------------------------------------------------------------------------
 // * * * program main * * * //
@@ -70,7 +124,7 @@ int main() {
     //constructor will load data from file
 
     
-    HexBoard myBoard(11);
+    HexBoard myBoard(4);
     char myChoice;
     HBPlayerElem myPlayer;
     int tempi, tempj;
@@ -94,7 +148,10 @@ int main() {
         cout << "Enter j:";
         cin >> tempj;
 
-        myBoard.PlayerMove(myPlayer, tempi, tempj);
+        if (myChoice == 'r' || myChoice == 'b') {
+            myBoard.PlayerMove(myPlayer, tempi, tempj);
+            
+        }
         myBoard.PrintValues();
 
     } while (1);
@@ -182,13 +239,60 @@ bool HexBoard::PlayerMove(HBPlayerElem player, int i, int j) {
     SetElement(i, j, player);
 
     //verify if same color on the left
-    if (i > 0) {
-        if (graphMatrix[i-1][j] == player) {
-            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i - 1, j));
+    if (j > 0) {
+        if (graphMatrix[i][j-1] == player) {
+            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i, j-1));
         }
     }
+    //verify if same color on the right
+    if ((j+1) < this->size) {
+        if (graphMatrix[i][j + 1] == player) {
+            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i, j + 1));
+        }
+    }
+    //verify if same color on top
+    if (i > 0) {
+        //top left...
+        if (graphMatrix[i-1][j] == player) {
+            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i-1, j));
+        }
+        //top right
+        if ((j+1) < (this->size)) {
+            if (graphMatrix[i - 1][j + 1] == player) {
+                AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i - 1, j + 1));
+            }
+        }
+    }
+    //verify if same color on bottom
+    if ((i + 1) < (this->size)) {
+        //bottom right...
+        if (graphMatrix[i + 1][j] == player) {
+            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i + 1, j));
+        }
+        //bottom left
+        if (j > 0) {
+            if (graphMatrix[i + 1][j - 1] == player) {
+                AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i + 1, j - 1));
+            }
+        }
+    }
+    
+    std::vector<EdgesElement> * lGraphRef = nullptr;
+    if (player == HBPlayerElem::BLUE) {
+        lGraphRef = &(playerGraph[0]);
+    } else {
+        lGraphRef = &(playerGraph[1]);
+    }
+    JarnikPrimMST  localMst(*lGraphRef, (this->size) * (this->size));
+    localMst.ComputeMST(GetNodeId(i, j));
 
-    //add relevant edges to player's graph!
+    
+    if (PlayerWin(player, localMst.mstGraph)) {
+        cout << endl;
+        cout << "PLAYER WIN!!!";
+    }
+
+    PrintPlayerGraph(player);
 }
 
 
@@ -201,20 +305,122 @@ void HexBoard::ResetPlayerGraph(HBPlayerElem player) {
     }
 }
 
-int HexBoard::GetNodeId(int nodaA_x, int nodeA_y) {
-    return (nodaA_x + (this->size) * nodeA_y);
+int HexBoard::GetNodeId(int nodeA_x, int nodeA_y) {
+    return (nodeA_y + (this->size) * nodeA_x);
 }
 
 void HexBoard::AddToPlayerGraph(HBPlayerElem player, int nodeA, int nodeB) {
-    edgeType lEdge;
 
-    lEdge.nodeA = nodeA;
-    lEdge.nodeB = nodeB;
+    EdgesElement localElement;
+    localElement.nodeA = nodeA;
+    localElement.nodeB = nodeB;
+    localElement.edgeCost = 1; //constant cost
 
     if (player == HBPlayerElem::BLUE) {
-        playerGraph[0].push_back(lEdge);
+        playerGraph[0].push_back(localElement);
     }
     if (player == HBPlayerElem::RED) {
-        playerGraph[1].push_back(lEdge);
+        playerGraph[1].push_back(localElement);
     }
+}
+
+void HexBoard::PrintPlayerGraph(HBPlayerElem player) {
+    edgeType lEdge;
+
+    cout << endl;
+    if (player == HBPlayerElem::BLUE) {
+        for (auto& i : playerGraph[0])
+            cout << i.nodeA << " " << i.nodeB << endl;
+    }
+    if (player == HBPlayerElem::RED) {
+        for (auto& i : playerGraph[1])
+            cout << i.nodeA << " " << i.nodeB << endl;
+    }
+}
+
+bool HexBoard::PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph) {
+    bool graphContainsStart = false;
+    bool graphContainsEnd = false;
+
+    if (player == HBPlayerElem::BLUE) {
+        for (auto &el : graph) {
+            if ((el.nodeA < this->size) || (el.nodeB < this->size)) { //if first ROW
+                //contains START!
+                graphContainsStart = true;
+            }
+            if ((el.nodeA >= (GetNumOfNodes() - this->size)) || (el.nodeB >= (GetNumOfNodes() - this->size))) {  //if last row
+                //contains END!
+                graphContainsEnd = true;
+            }
+        }
+    }
+    if (player == HBPlayerElem::RED) {
+        for (auto& el : graph) {
+            if (((el.nodeA % this->size) == 0) || (el.nodeB % this->size) == 0) { //if first COLUMN
+                //contains START!
+                graphContainsStart = true;
+            }
+            if (((el.nodeA % this->size) == (this->size - 1)) || (el.nodeB % this->size) == (this->size - 1)) { //if last COLUMN
+                //contains END!
+                graphContainsEnd = true;
+            }
+        }
+    }
+
+    return graphContainsStart && graphContainsEnd;
+}
+
+
+JarnikPrimMST::JarnikPrimMST(std::vector<EdgesElement>& fullGraphRef, int numOfNodes) : fullGraph(fullGraphRef) {
+    this->SetGraphSize(numOfNodes);
+}
+
+
+EdgesType JarnikPrimMST::ComputeMST(int startingNode) {
+
+    std::vector<int> nodesReached = {};
+
+    mstGraph.resize(0);
+
+    nodesReached.push_back(startingNode);
+
+    EdgesType localCost = Gr_Infinity;
+    EdgesElement localElem;
+
+    do {
+        localElem.edgeCost = Gr_Infinity;
+        for (auto x : nodesReached) {
+            for (auto& y : fullGraph) {
+                if ((y.nodeA == x) || (y.nodeB == x)) { //if node contains a node of the temporary MST...
+                    if ((std::find(nodesReached.begin(), nodesReached.end(), y.nodeA) == nodesReached.end()) ||   //if one of the 2 nodes are not reached by MST...
+                        (std::find(nodesReached.begin(), nodesReached.end(), y.nodeB) == nodesReached.end()))
+                    {
+                        if (y.edgeCost  < localElem.edgeCost) {
+                            localElem = y;  //assign new edge as possible new element...
+                        }
+                    }
+                }
+            }
+        }
+        if (localElem.edgeCost != Gr_Infinity) {
+            //we have another edge...
+            if (std::find(nodesReached.begin(), nodesReached.end(), localElem.nodeA) == nodesReached.end()) {
+                nodesReached.push_back(localElem.nodeA);
+            }
+            else {
+                nodesReached.push_back(localElem.nodeB);
+            }
+
+            mstGraph.push_back(localElem);
+        }
+        else {
+            return Gr_Infinity; //no MST found!
+        }
+    } while (nodesReached.size() < GetGraphSize());
+
+    EdgesType totalMstCost = 0;
+    for (auto& el : mstGraph) {
+        totalMstCost += el.edgeCost;
+    }
+    return totalMstCost;
 }
