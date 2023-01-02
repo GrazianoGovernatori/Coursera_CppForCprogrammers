@@ -30,13 +30,6 @@ enum class HBPlayerElem{
     RED,
 };
 
-//we're not interested in cost (we can assume it to be constant, and set to 1
-class edgeType {
-public:
-    int nodeA;
-    int nodeB;
-};
-
 //type to hold graph data, i.e. distance within nodes
 typedef std::vector< std::vector<HBPlayerElem> > matrix;
 
@@ -70,6 +63,7 @@ private:
     int size = 4;
     matrix graphMatrix;
     std::vector<EdgesElement> playerGraph[2];
+    HBPlayerElem winner = HBPlayerElem::EMPTY;
 public:
     void ResetBoard(void);
     int GetSize() { return this->size; }
@@ -86,8 +80,8 @@ public:
     void PrintPlayerGraph(HBPlayerElem player);
     bool PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph);
     int GetNumOfNodes(void) { return size * size; }
-
-};
+    HBPlayerElem GetWinner(void) { return winner; }
+ };
 
 
 class JarnikPrimMST {
@@ -121,41 +115,83 @@ public:
 // * * * program main * * * //
 //-------------------------------------------------------------------------------------------------
 int main() {
-    //constructor will load data from file
-
     
-    HexBoard myBoard(4);
     char myChoice;
     HBPlayerElem myPlayer;
     int tempi, tempj;
 
     do {
-        cout << "Enter choice: ('q' to exit)";
+        cout << "Enter player color: [b|r]";
         cin >> myChoice;
 
-        if (myChoice == 'q') {
-            break;
-        }
         if (myChoice == 'b') {
             myPlayer = HBPlayerElem::BLUE;
+            break;
         }
         if (myChoice == 'r') {
             myPlayer = HBPlayerElem::RED;
+            break;
         }
-        cout << endl;
-        cout << "Enter i:";
-        cin >> tempi;
-        cout << "Enter j:";
-        cin >> tempj;
-
-        if (myChoice == 'r' || myChoice == 'b') {
-            myBoard.PlayerMove(myPlayer, tempi, tempj);
-            
-        }
-        myBoard.PrintValues();
 
     } while (1);
-    myBoard.PrintValues();
+
+    int tmpSize;
+    do {
+        cout << "Enter board size (edge size):";
+        cin >> tmpSize;
+
+        if ((tmpSize >= Gr_MinBoardSize) && (tmpSize <= Gr_MaxBoardSize)) {
+            break;
+        }
+        //if value is not valid, loop forever
+    } while (1);
+    HexBoard myBoard(tmpSize);
+
+    HBPlayerElem currPlayer;
+    cout << "BLUE move" << endl;
+    currPlayer = HBPlayerElem::BLUE;
+    srand(time(NULL));
+    do {
+        if (myPlayer == currPlayer) {
+            cout << "Player move " << endl;
+            cout << endl;
+            cout << "Enter i: ";
+            cin >> tempi;
+            cout << endl;
+            cout << "Enter j: ";
+            cin >> tempj;
+        } else {
+            cout << "Computer move " << endl;
+            // computer random move
+            int randomVal = rand();
+
+            tempi = (randomVal & 0xFF) % myBoard.GetSize();
+            tempj = ((randomVal >> 8) & 0xFF) % myBoard.GetSize();
+        }
+
+        if (myBoard.PlayerMove(currPlayer, tempi, tempj) == true) {
+            //switch player
+            if (currPlayer == HBPlayerElem::BLUE) {
+                currPlayer = HBPlayerElem::RED;
+            }
+            else {
+                currPlayer = HBPlayerElem::BLUE;
+            }
+            myBoard.PrintValues();
+
+            if (myBoard.GetWinner() == HBPlayerElem::BLUE) {
+                cout << endl << "BLUE WINS!" << endl;
+                break;
+            } else if (myBoard.GetWinner() == HBPlayerElem::RED) {
+                cout << endl << "RED WINS!" << endl;
+                break;
+            }
+        } else {
+            if (myPlayer == currPlayer) {
+                cout << "Wrong selection! Place already taken" << endl;
+            }
+        }
+    } while (1);
 
 }
 
@@ -217,6 +253,7 @@ void HexBoard::PrintValues(bool showParenthesis) {
             }
         }
     }
+    cout << endl;
 }
 
 string HexBoard::SymbolToDisplay(HBPlayerElem lElement) {
@@ -288,11 +325,13 @@ bool HexBoard::PlayerMove(HBPlayerElem player, int i, int j) {
 
     
     if (PlayerWin(player, localMst.mstGraph)) {
-        cout << endl;
-        cout << "PLAYER WIN!!!";
+        winner = player;
     }
 
     PrintPlayerGraph(player);
+
+    return true; 
+
 }
 
 
@@ -325,8 +364,6 @@ void HexBoard::AddToPlayerGraph(HBPlayerElem player, int nodeA, int nodeB) {
 }
 
 void HexBoard::PrintPlayerGraph(HBPlayerElem player) {
-    edgeType lEdge;
-
     cout << endl;
     if (player == HBPlayerElem::BLUE) {
         for (auto& i : playerGraph[0])
@@ -342,7 +379,7 @@ bool HexBoard::PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph) {
     bool graphContainsStart = false;
     bool graphContainsEnd = false;
 
-    if (player == HBPlayerElem::BLUE) {
+    if (player == HBPlayerElem::RED) {
         for (auto &el : graph) {
             if ((el.nodeA < this->size) || (el.nodeB < this->size)) { //if first ROW
                 //contains START!
@@ -354,7 +391,7 @@ bool HexBoard::PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph) {
             }
         }
     }
-    if (player == HBPlayerElem::RED) {
+    if (player == HBPlayerElem::BLUE) {
         for (auto& el : graph) {
             if (((el.nodeA % this->size) == 0) || (el.nodeB % this->size) == 0) { //if first COLUMN
                 //contains START!

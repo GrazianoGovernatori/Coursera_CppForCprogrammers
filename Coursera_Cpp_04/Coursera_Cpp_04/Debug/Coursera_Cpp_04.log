@@ -1,11 +1,10 @@
 ﻿  Coursera_Cpp_04.cpp
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(185,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(186,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(196,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(204,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(213,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(215,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(328,14): warning C4101: 'lEdge': variabile locale senza riferimenti
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(419,34): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(296): warning C4715: 'HexBoard::PlayerMove': non tutti i percorsi di controllo restituiscono un valore
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(153,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(221,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(222,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(232,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(240,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(249,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(251,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Coursera_Cpp_04\Coursera_Cpp_04.cpp(456,34): warning C4018: '<': errata corrispondenza tra signed e unsigned
   Coursera_Cpp_04.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_04\Debug\Coursera_Cpp_04.exe
