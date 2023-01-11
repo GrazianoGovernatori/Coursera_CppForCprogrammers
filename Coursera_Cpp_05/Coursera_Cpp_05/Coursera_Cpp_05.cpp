@@ -176,11 +176,16 @@ int main() {
         }
         else {
             cout << "Computer move " << endl;
-            // computer random move
-            int randomVal = rand();
 
-            tempi = (randomVal & 0xFF) % myBoard.GetSize();
-            tempj = ((randomVal >> 8) & 0xFF) % myBoard.GetSize();
+            //DEBUG, REMOVE!!!
+            auto nodeNextMove = myBoard.ComputeBestMove(currPlayer);
+            if (nodeNextMove != -1) {
+                tempi = nodeNextMove / myBoard.GetSize();
+                tempj = nodeNextMove % myBoard.GetSize();
+            }
+            else {
+                cout << "WTF????????" << endl;
+            }
         }
 
         if (myBoard.PlayerMove(currPlayer, tempi, tempj) == true) {
@@ -202,20 +207,12 @@ int main() {
                 break;
             }
 
-
-            //DEBUG, REMOVE!!!
-            if (myPlayer != currPlayer) {
-                myBoard.ComputeBestMove(currPlayer);
-            }
         }
         else {
             if (myPlayer == currPlayer) {
                 cout << "Wrong selection! Place already taken" << endl;
             }
         }
-
-
-
 
     } while (1);
 
@@ -463,23 +460,42 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
     //shuffle missing places...
     std::random_device rd;
     std::mt19937 g(rd());
-    std::shuffle(freeNodesList.begin(), freeNodesList.end(), g);
-    //alternate blue and red, starting from who's next, with random nodes
-    for (int it = 0; it < freeNodesList.size(); it++) {
-        SetElement(freeNodesList[it], tempNext);
-        //toggle player
-        if (tempNext == HBPlayerElem::BLUE) {
-            tempNext = HBPlayerElem::RED;
+
+    int trials = 10;
+    do {
+        std::shuffle(freeNodesList.begin(), freeNodesList.end(), g);
+        //alternate blue and red, starting from who's next, with random nodes
+        for (int it = 0; it < freeNodesList.size(); it++) {
+            SetElement(freeNodesList[it], tempNext);
+            //toggle player
+            if (tempNext == HBPlayerElem::BLUE) {
+                tempNext = HBPlayerElem::RED;
+            }
+            else {
+                tempNext = HBPlayerElem::BLUE;
+            }
         }
-        else {
-            tempNext = HBPlayerElem::BLUE;
+
+        //DEBUG - print shuffled vector placed over matrix, to fill it
+        PrintValues();
+
+        if (EvaluateWin() == player) {
+            for (auto& nod : freeNodeMerit) {
+                nod.second++;
+            }
+        }
+        trials--;
+    } while (trials > 0);
+
+
+    int max = 0;
+    int bestMoveNode = -1;
+    for (auto nod : freeNodeMerit) {
+        if (nod.second > max) {
+            bestMoveNode = nod.first;
         }
     }
 
-    //DEBUG - print shuffled vector placed over matrix, to fill it
-    PrintValues();
-
-    EvaluateWin();
 
     //Restore original matrix - set empty positions
     for (int it = 0; it < freeNodesList.size(); it++) {
@@ -487,7 +503,7 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
     }
     PrintValues();
 
-    return 0;
+    return bestMoveNode;
 }
 
 HBPlayerElem HexBoard::EvaluateWin() {
@@ -522,13 +538,13 @@ HBPlayerElem HexBoard::EvaluateWin() {
         }
     }
 
+    bool isWinning = false;
     for (int colIter = 0; colIter < size; colIter++) {
         if (tempMat[size - 1][colIter] > 0) {
             cout << "RED WIN" << endl;
+            isWinning = true;
         }
     }
-
-
     //DEBUG!!!!!!!!!!!!!!!!!!!!
     string offset = "  ";
     for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
@@ -557,16 +573,19 @@ HBPlayerElem HexBoard::EvaluateWin() {
     }
     cout << endl;
 
-
-
-
     //print marked matrix
-
-
-    return HBPlayerElem::EMPTY;
+    if (isWinning == true) {
+        return HBPlayerElem::RED;
+    }  
+    cout << " BLUE WIN" << endl;
+    return HBPlayerElem::BLUE;
 }
 
 void HexBoard::MarkNeighbors(std::vector< std::vector<int>> & matrix, int row, int col) {
+
+    if (row == 0 && col == 0) {
+        cout << "eval 00";
+    }
     //if top left element is zero, and neighboring, and not checked yet
     if ((row > 0) && (matrix[row - 1][col] == 0)) {
         matrix[row - 1][col] = matrix[row][col]; //mark it with same code...
