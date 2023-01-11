@@ -19,11 +19,6 @@ using namespace std;
 //typedef int EdgesType;
 typedef int EdgesType;
 
-//-------------------------------------------------------------------------------------------------
-// * * * constants - collect here all const values and identifiers * * * //
-//we use a conventional value to identify infinity
-constexpr EdgesType Gr_Infinity = std::numeric_limits<EdgesType>::max();
-
 enum class HBPlayerElem {
     EMPTY = 0,
     BLUE,
@@ -47,7 +42,7 @@ constexpr int Gr_MaxBoardSize = 11;
 class EdgesElement {
 public:
     EdgesElement(int a, int b, EdgesType c) : nodeA(a), nodeB(b), edgeCost(c) {}
-    EdgesElement() {}
+    EdgesElement() :nodeA(0), nodeB(0), edgeCost{1} {}
 public:
     int nodeA;
     int nodeB;
@@ -62,67 +57,28 @@ public:
 private:
     int size = 4;
     matrix graphMatrix;
-    std::vector<EdgesElement> playerGraph[2];
     HBPlayerElem winner = HBPlayerElem::EMPTY;
-    int remainingMoves;
 
-    //AI-related
-    std::vector<HBPlayerElem> remainingMovesSequence = {};
 public:
     void ResetBoard(void);
     int GetSize() { return this->size; }
     void PrintValues(bool printParenthesis = true);
     string SymbolToDisplay(HBPlayerElem lElement);
 
-    void Resize(int newSize);
     void SetElement(int i, int j, HBPlayerElem edgeValue);
     void SetElement(int node, HBPlayerElem edgeValue);
+    HBPlayerElem GetElement(int node);
     bool PlayerMove(HBPlayerElem player, int i, int j);
 
-    void ResetPlayerGraph(HBPlayerElem player);
     int GetNodeId(int nodaA_x, int nodeA_y);
-    void AddToPlayerGraph(HBPlayerElem player, int nodeA, int nodeB);
-    void PrintPlayerGraph(HBPlayerElem player);
     bool PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph);
     int GetNumOfNodes(void) { return size * size; }
-    HBPlayerElem GetWinner(void) { return winner; }
-    int GetRemainingMoves(void) { return remainingMoves; };
 
     //AI-related
     int ComputeBestMove(HBPlayerElem player);
-    HBPlayerElem EvaluateWin(void);  //alternative method to compute winner
+    bool EvaluateWin(HBPlayerElem player);  //alternative method to compute winner
     void MarkNeighbors(std::vector< std::vector<int>>& matrix, int row, int col);
-
 };
-
-
-class JarnikPrimMST {
-private:
-    std::vector<EdgesElement>& fullGraph;
-    int numOfNodes;
-
-public:
-    std::vector<EdgesElement> mstGraph = {};
-
-public:
-    JarnikPrimMST(std::vector<EdgesElement>& fullGraphRef, int numOfNodes);
-
-    void ResetGraph() {
-        //fullGraph.resize(0);
-    }
-
-    void AddElement(EdgesElement el) {
-        //fullGraph.push_back(el);
-    }
-
-    EdgesType ComputeMST(int startingNode);
-
-    void PrintGraphs();
-
-    int GetGraphSize() { return numOfNodes; };
-    void SetGraphSize(int newSize) { numOfNodes = newSize; };
-};
-
 
 //-------------------------------------------------------------------------------------------------
 // * * * program main * * * //
@@ -133,6 +89,7 @@ int main() {
     HBPlayerElem myPlayer;
     int tempi, tempj;
 
+    //choose player color
     do {
         cout << "Enter player color: [b|r]";
         cin >> myChoice;
@@ -148,6 +105,7 @@ int main() {
 
     } while (1);
 
+    //choose board size
     int tmpSize;
     do {
         cout << "Enter board size (edge size):";
@@ -173,6 +131,15 @@ int main() {
             cout << endl;
             cout << "Enter j: ";
             cin >> tempj;
+
+            if (tempi >= myBoard.GetSize()) {
+                cout << "Error, x coordinate clamped!" << endl;
+                tempi = myBoard.GetSize() - 1;
+            }
+            if (tempj >= myBoard.GetSize()) {
+                cout << "Error, y coordinate clamped!" << endl;
+                tempj = myBoard.GetSize() - 1;
+            }
         }
         else {
             cout << "Computer move " << endl;
@@ -185,10 +152,20 @@ int main() {
             }
             else {
                 cout << "WTF????????" << endl;
+                return 1;
             }
         }
 
         if (myBoard.PlayerMove(currPlayer, tempi, tempj) == true) {
+
+            if (myBoard.EvaluateWin(currPlayer)) {
+                if (currPlayer == HBPlayerElem::BLUE) {
+                    cout << "BLUE WINS!!!" << endl;
+                } else {
+                    cout << "RED WINS!!!" << endl;
+                }
+                break;
+            }
             //switch player
             if (currPlayer == HBPlayerElem::BLUE) {
                 currPlayer = HBPlayerElem::RED;
@@ -197,16 +174,6 @@ int main() {
                 currPlayer = HBPlayerElem::BLUE;
             }
             myBoard.PrintValues();
-
-            if (myBoard.GetWinner() == HBPlayerElem::BLUE) {
-                cout << endl << "BLUE WINS!" << endl;
-                break;
-            }
-            else if (myBoard.GetWinner() == HBPlayerElem::RED) {
-                cout << endl << "RED WINS!" << endl;
-                break;
-            }
-
         }
         else {
             if (myPlayer == currPlayer) {
@@ -216,6 +183,11 @@ int main() {
 
     } while (1);
 
+    cout << endl;
+    cout << "Program end!" << endl;
+    int fkvar;
+    cin >> fkvar;
+    return 0;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -228,7 +200,6 @@ HexBoard::HexBoard(int paramSize) {
     if (paramSize > Gr_MaxBoardSize) {
         paramSize = Gr_MaxBoardSize;
     }
-
     this->size = paramSize;
 
     //always an n X n matrix
@@ -236,7 +207,6 @@ HexBoard::HexBoard(int paramSize) {
     for (int iter = 0; iter < paramSize; iter++) {
         graphMatrix[iter].resize(paramSize);
     }
-
     ResetBoard();
 }
 
@@ -246,9 +216,6 @@ void HexBoard::ResetBoard(void) {
             graphMatrix[outerIter][iter] = HBPlayerElem::EMPTY;
         }
     }
-    ResetPlayerGraph(HBPlayerElem::BLUE);
-    ResetPlayerGraph(HBPlayerElem::RED);
-    remainingMoves = this->size * this->size;
 }
 
 void HexBoard::PrintValues(bool showParenthesis) {
@@ -300,6 +267,15 @@ void HexBoard::SetElement(int node, HBPlayerElem edgeValue) {
     graphMatrix[i][j] = edgeValue;
 }
 
+HBPlayerElem HexBoard::GetElement(int node) {
+    int i, j;
+
+    i = node / (this->size);
+    j = node % (this->size);
+    return graphMatrix[i][j];
+}
+
+
 bool HexBoard::PlayerMove(HBPlayerElem player, int i, int j) {
     if (graphMatrix[i][j] != HBPlayerElem::EMPTY) {
         return false; //BAD MOVE!
@@ -307,104 +283,12 @@ bool HexBoard::PlayerMove(HBPlayerElem player, int i, int j) {
 
     SetElement(i, j, player);
 
-    //verify if same color on the left
-    if (j > 0) {
-        if (graphMatrix[i][j - 1] == player) {
-            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i, j - 1));
-        }
-    }
-    //verify if same color on the right
-    if ((j + 1) < this->size) {
-        if (graphMatrix[i][j + 1] == player) {
-            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i, j + 1));
-        }
-    }
-    //verify if same color on top
-    if (i > 0) {
-        //top left...
-        if (graphMatrix[i - 1][j] == player) {
-            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i - 1, j));
-        }
-        //top right
-        if ((j + 1) < (this->size)) {
-            if (graphMatrix[i - 1][j + 1] == player) {
-                AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i - 1, j + 1));
-            }
-        }
-    }
-    //verify if same color on bottom
-    if ((i + 1) < (this->size)) {
-        //bottom right...
-        if (graphMatrix[i + 1][j] == player) {
-            AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i + 1, j));
-        }
-        //bottom left
-        if (j > 0) {
-            if (graphMatrix[i + 1][j - 1] == player) {
-                AddToPlayerGraph(player, GetNodeId(i, j), GetNodeId(i + 1, j - 1));
-            }
-        }
-    }
-
-    std::vector<EdgesElement>* lGraphRef = nullptr;
-    if (player == HBPlayerElem::BLUE) {
-        lGraphRef = &(playerGraph[0]);
-    }
-    else {
-        lGraphRef = &(playerGraph[1]);
-    }
-    JarnikPrimMST  localMst(*lGraphRef, (this->size) * (this->size));
-    localMst.ComputeMST(GetNodeId(i, j));
-
-
-    if (PlayerWin(player, localMst.mstGraph)) {
-        winner = player;
-    }
-
-    PrintPlayerGraph(player);
-
     return true;
 }
 
 
-void HexBoard::ResetPlayerGraph(HBPlayerElem player) {
-    if (player == HBPlayerElem::BLUE) {
-        playerGraph[0].resize(0);
-    }
-    if (player == HBPlayerElem::RED) {
-        playerGraph[1].resize(0);
-    }
-}
-
 int HexBoard::GetNodeId(int nodeA_x, int nodeA_y) {
     return (nodeA_y + (this->size) * nodeA_x);
-}
-
-void HexBoard::AddToPlayerGraph(HBPlayerElem player, int nodeA, int nodeB) {
-
-    EdgesElement localElement;
-    localElement.nodeA = nodeA;
-    localElement.nodeB = nodeB;
-    localElement.edgeCost = 1; //constant cost
-
-    if (player == HBPlayerElem::BLUE) {
-        playerGraph[0].push_back(localElement);
-    }
-    if (player == HBPlayerElem::RED) {
-        playerGraph[1].push_back(localElement);
-    }
-}
-
-void HexBoard::PrintPlayerGraph(HBPlayerElem player) {
-    cout << endl;
-    if (player == HBPlayerElem::BLUE) {
-        for (auto& i : playerGraph[0])
-            cout << i.nodeA << " " << i.nodeB << endl;
-    }
-    if (player == HBPlayerElem::RED) {
-        for (auto& i : playerGraph[1])
-            cout << i.nodeA << " " << i.nodeB << endl;
-    }
 }
 
 bool HexBoard::PlayerWin(HBPlayerElem player, std::vector<EdgesElement> graph) {
@@ -461,7 +345,7 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
     std::random_device rd;
     std::mt19937 g(rd());
 
-    int trials = 10;
+    int trials = 100;
     do {
         std::shuffle(freeNodesList.begin(), freeNodesList.end(), g);
         //alternate blue and red, starting from who's next, with random nodes
@@ -477,21 +361,30 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
         }
 
         //DEBUG - print shuffled vector placed over matrix, to fill it
-        PrintValues();
+        //cout << endl << "trial: " << trials << endl;
+        //PrintValues();
 
-        if (EvaluateWin() == player) {
+        if (EvaluateWin(player) == true) {
             for (auto& nod : freeNodeMerit) {
-                nod.second++;
+                if (GetElement(nod.first) == player) {
+                    nod.second++;
+                }
+                
             }
         }
         trials--;
     } while (trials > 0);
 
 
+    //for (auto nodM : freeNodeMerit) {
+    //    cout << "node " << nodM.first << ",     merit: " << nodM.second << endl;
+    //}
+
     int max = 0;
     int bestMoveNode = -1;
     for (auto nod : freeNodeMerit) {
         if (nod.second > max) {
+            max = nod.second;
             bestMoveNode = nod.first;
         }
     }
@@ -501,16 +394,13 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
     for (int it = 0; it < freeNodesList.size(); it++) {
         SetElement(freeNodesList[it], HBPlayerElem::EMPTY);
     }
-    PrintValues();
+    //PrintValues();
 
     return bestMoveNode;
 }
 
-HBPlayerElem HexBoard::EvaluateWin() {
-    //evaluate if RED wins...
+bool HexBoard::EvaluateWin(HBPlayerElem player) {
 
-    //create a temporary matrix
-    
     std::vector< std::vector<int>> tempMat;
     tempMat.resize(size);
     for (int iter = 0; iter < size; iter++) {
@@ -520,65 +410,77 @@ HBPlayerElem HexBoard::EvaluateWin() {
     //copy game matrix in temp matrix
     for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
         for (int iter = 0; iter < graphMatrix.size(); iter++) {
-            if (graphMatrix[outerIter][iter] == HBPlayerElem::RED) {
-                tempMat[outerIter][iter] = 0;  //0 means RED element, to be checked
+            if (graphMatrix[outerIter][iter] == player) {
+                tempMat[outerIter][iter] = 0;  //0 means element of player type, to be checked
             } else {
                 tempMat[outerIter][iter] = -1; //-1 means not RED
             }
         }
     }
-
-
-
     //create an 
-    for (int colIter = 0; colIter < size; colIter++) {
-        if (tempMat[0][colIter] == 0) {  //check first row for RED chips
-            tempMat[0][colIter] = colIter;
-            MarkNeighbors(tempMat, 0, colIter);
+    if (player == HBPlayerElem::RED) {
+        for (int colIter = 0; colIter < size; colIter++) {
+            if (tempMat[0][colIter] == 0) {  //check first row for RED chips
+                tempMat[0][colIter] = colIter+1;  //to avoid assigning "0"
+                MarkNeighbors(tempMat, 0, colIter);
+            }
+        }
+    }  else { // check BLUE, check first column
+        for (int rowIter = 0; rowIter < size; rowIter++) {
+            if (tempMat[rowIter][0] == 0) {  //check first row for RED chips
+                tempMat[rowIter][0] = rowIter+1;
+                MarkNeighbors(tempMat, 0, rowIter);
+            }
         }
     }
 
     bool isWinning = false;
-    for (int colIter = 0; colIter < size; colIter++) {
-        if (tempMat[size - 1][colIter] > 0) {
-            cout << "RED WIN" << endl;
-            isWinning = true;
-        }
-    }
-    //DEBUG!!!!!!!!!!!!!!!!!!!!
-    string offset = "  ";
-    for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
-        cout << endl;
-        //plot ". - . - . - "
-        for (int lOff = 0; lOff < outerIter; lOff++) {
-            cout << offset;
-        }
-        cout << " ";
-        cout << (tempMat[outerIter][0] > 0 ? tempMat[outerIter][0] : 0);
-        for (int iter = 1; iter < tempMat.size(); iter++) {
-            cout << " - " << (tempMat[outerIter][iter] > 0 ? tempMat[outerIter][iter] : 0);
-        }
-        cout << endl;
-        cout << offset;
-        //plot " \  /  \  / ..."
-        for (int lOff = 0; lOff < outerIter; lOff++) {
-            cout << offset;
-        }
-        if (outerIter < (graphMatrix.size() - 1)) {
-            cout << "\\ ";
-            for (int iter = 1; iter < graphMatrix.size(); iter++) {
-                cout << "/ \\ ";
+    if (player == HBPlayerElem::RED) {
+        for (int colIter = 0; colIter < size; colIter++) {
+            if (tempMat[size - 1][colIter] > 0) {
+                //cout << "RED WIN" << endl;
+                isWinning = true;
             }
         }
+    } else {
+        for (int rowIter = 0; rowIter < size; rowIter++) {
+            if (tempMat[rowIter][size - 1] > 0) {
+                //cout << "BLUE WIN" << endl;
+                isWinning = true;
+            }
+        }
+
     }
-    cout << endl;
+    //DEBUG!!!!!!!!!!!!!!!!!!!!
+    //string offset = "  ";
+    //for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
+    //    cout << endl;
+    //    //plot ". - . - . - "
+    //    for (int lOff = 0; lOff < outerIter; lOff++) {
+    //        cout << offset;
+    //    }
+    //    cout << " ";
+    //    cout << (tempMat[outerIter][0] > 0 ? tempMat[outerIter][0] : 0);
+    //    for (int iter = 1; iter < tempMat.size(); iter++) {
+    //        cout << " - " << (tempMat[outerIter][iter] > 0 ? tempMat[outerIter][iter] : 0);
+    //    }
+    //    cout << endl;
+    //    cout << offset;
+    //    //plot " \  /  \  / ..."
+    //    for (int lOff = 0; lOff < outerIter; lOff++) {
+    //        cout << offset;
+    //    }
+    //    if (outerIter < (graphMatrix.size() - 1)) {
+    //        cout << "\\ ";
+    //        for (int iter = 1; iter < graphMatrix.size(); iter++) {
+    //            cout << "/ \\ ";
+    //        }
+    //    }
+    //}
+    //cout << endl;
 
     //print marked matrix
-    if (isWinning == true) {
-        return HBPlayerElem::RED;
-    }  
-    cout << " BLUE WIN" << endl;
-    return HBPlayerElem::BLUE;
+    return isWinning;
 }
 
 void HexBoard::MarkNeighbors(std::vector< std::vector<int>> & matrix, int row, int col) {
@@ -616,59 +518,4 @@ void HexBoard::MarkNeighbors(std::vector< std::vector<int>> & matrix, int row, i
         matrix[row + 1][col-1] = matrix[row][col]; //mark it with same code...
         MarkNeighbors(matrix, row + 1, col-1);
     }
-
-}
-
-JarnikPrimMST::JarnikPrimMST(std::vector<EdgesElement>& fullGraphRef, int numOfNodes) : fullGraph(fullGraphRef) {
-    this->SetGraphSize(numOfNodes);
-}
-
-
-EdgesType JarnikPrimMST::ComputeMST(int startingNode) {
-
-    std::vector<int> nodesReached = {};
-
-    mstGraph.resize(0);
-
-    nodesReached.push_back(startingNode);
-
-    EdgesType localCost = Gr_Infinity;
-    EdgesElement localElem;
-
-    do {
-        localElem.edgeCost = Gr_Infinity;
-        for (auto x : nodesReached) {
-            for (auto& y : fullGraph) {
-                if ((y.nodeA == x) || (y.nodeB == x)) { //if node contains a node of the temporary MST...
-                    if ((std::find(nodesReached.begin(), nodesReached.end(), y.nodeA) == nodesReached.end()) ||   //if one of the 2 nodes are not reached by MST...
-                        (std::find(nodesReached.begin(), nodesReached.end(), y.nodeB) == nodesReached.end()))
-                    {
-                        if (y.edgeCost < localElem.edgeCost) {
-                            localElem = y;  //assign new edge as possible new element...
-                        }
-                    }
-                }
-            }
-        }
-        if (localElem.edgeCost != Gr_Infinity) {
-            //we have another edge...
-            if (std::find(nodesReached.begin(), nodesReached.end(), localElem.nodeA) == nodesReached.end()) {
-                nodesReached.push_back(localElem.nodeA);
-            }
-            else {
-                nodesReached.push_back(localElem.nodeB);
-            }
-
-            mstGraph.push_back(localElem);
-        }
-        else {
-            return Gr_Infinity; //no MST found!
-        }
-    } while (nodesReached.size() < GetGraphSize());
-
-    EdgesType totalMstCost = 0;
-    for (auto& el : mstGraph) {
-        totalMstCost += el.edgeCost;
-    }
-    return totalMstCost;
 }
