@@ -1,19 +1,23 @@
 ﻿  Coursera_Cpp_05.cpp
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(124,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(214,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(215,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(223,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(231,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(240,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(242,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(332,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(333,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(352,29): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(394,25): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(411,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(412,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(497,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(507,18): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(512,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
-C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(517,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(129,15): warning C4244: 'argomento': conversione da 'time_t' a 'unsigned int'. Possibile perdita di dati.
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(219,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(220,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(228,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(236,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(245,23): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(247,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(337,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(338,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(357,29): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(400,25): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(415,39): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(416,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(461,43): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(469,37): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(478,27): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(480,41): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(500,33): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(510,18): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(515,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
+C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Coursera_Cpp_05\Coursera_Cpp_05.cpp(520,20): warning C4018: '<': errata corrispondenza tra signed e unsigned
   Coursera_Cpp_05.vcxproj -> C:\Users\ggovernatori\source\repos\Coursera_Cpp_05\Debug\Coursera_Cpp_05.exe

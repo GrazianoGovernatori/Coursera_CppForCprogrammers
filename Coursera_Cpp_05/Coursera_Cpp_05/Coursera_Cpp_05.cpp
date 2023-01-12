@@ -35,6 +35,8 @@ typedef std::pair<int, int> nodeMeritPair;
 constexpr int Gr_MinBoardSize = 4;
 constexpr int Gr_MaxBoardSize = 11;
 
+constexpr bool Enable_Debug_Print = false;
+constexpr int  Number_Of_Trials = 400;
 //-------------------------------------------------------------------------------------------------
 // * * * classes definition * * * //
 
@@ -84,7 +86,6 @@ public:
 // * * * program main * * * //
 //-------------------------------------------------------------------------------------------------
 int main() {
-
     char myChoice;
     HBPlayerElem myPlayer;
     int tempi, tempj;
@@ -118,6 +119,10 @@ int main() {
     } while (1);
     HexBoard myBoard(tmpSize);
 
+    cout << "Ready? Remember: " << endl;
+    cout << "   Blue (X) must create a path left-to-right" << endl;
+    cout << "   Red  (O) must create a path top-to-bottom" << endl;
+
     HBPlayerElem currPlayer;
     cout << "BLUE move" << endl;
     currPlayer = HBPlayerElem::BLUE;
@@ -144,14 +149,15 @@ int main() {
         else {
             cout << "Computer move " << endl;
 
-            //DEBUG, REMOVE!!!
             auto nodeNextMove = myBoard.ComputeBestMove(currPlayer);
             if (nodeNextMove != -1) {
                 tempi = nodeNextMove / myBoard.GetSize();
                 tempj = nodeNextMove % myBoard.GetSize();
             }
             else {
-                cout << "WTF????????" << endl;
+                if (Enable_Debug_Print == true) {
+                    cout << "WTF????????" << endl;
+                }
                 return 1;
             }
         }
@@ -164,6 +170,7 @@ int main() {
                 } else {
                     cout << "RED WINS!!!" << endl;
                 }
+                myBoard.PrintValues();
                 break;
             }
             //switch player
@@ -185,8 +192,6 @@ int main() {
 
     cout << endl;
     cout << "Program end!" << endl;
-    int fkvar;
-    cin >> fkvar;
     return 0;
 }
 
@@ -345,7 +350,7 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
     std::random_device rd;
     std::mt19937 g(rd());
 
-    int trials = 100;
+    int trials = Number_Of_Trials;
     do {
         std::shuffle(freeNodesList.begin(), freeNodesList.end(), g);
         //alternate blue and red, starting from who's next, with random nodes
@@ -360,25 +365,27 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
             }
         }
 
-        //DEBUG - print shuffled vector placed over matrix, to fill it
-        //cout << endl << "trial: " << trials << endl;
-        //PrintValues();
-
         if (EvaluateWin(player) == true) {
             for (auto& nod : freeNodeMerit) {
                 if (GetElement(nod.first) == player) {
                     nod.second++;
                 }
-                
+
             }
         }
         trials--;
     } while (trials > 0);
 
 
-    //for (auto nodM : freeNodeMerit) {
-    //    cout << "node " << nodM.first << ",     merit: " << nodM.second << endl;
-    //}
+    if (Enable_Debug_Print == true) {
+        sort(freeNodeMerit.begin(), freeNodeMerit.end(), [](auto& left, auto& right) {
+            return left.second < right.second;
+            });
+
+        for (auto nodM : freeNodeMerit) {
+            cout << "node " << nodM.first << ",     merit: " << nodM.second << endl;
+        }
+    }
 
     int max = 0;
     int bestMoveNode = -1;
@@ -389,18 +396,15 @@ int HexBoard::ComputeBestMove(HBPlayerElem player) {
         }
     }
 
-
     //Restore original matrix - set empty positions
     for (int it = 0; it < freeNodesList.size(); it++) {
         SetElement(freeNodesList[it], HBPlayerElem::EMPTY);
     }
-    //PrintValues();
 
     return bestMoveNode;
 }
 
 bool HexBoard::EvaluateWin(HBPlayerElem player) {
-
     std::vector< std::vector<int>> tempMat;
     tempMat.resize(size);
     for (int iter = 0; iter < size; iter++) {
@@ -417,7 +421,7 @@ bool HexBoard::EvaluateWin(HBPlayerElem player) {
             }
         }
     }
-    //create an 
+    //populate temp matrix with color under evaluation (put zeroes)
     if (player == HBPlayerElem::RED) {
         for (int colIter = 0; colIter < size; colIter++) {
             if (tempMat[0][colIter] == 0) {  //check first row for RED chips
@@ -427,9 +431,9 @@ bool HexBoard::EvaluateWin(HBPlayerElem player) {
         }
     }  else { // check BLUE, check first column
         for (int rowIter = 0; rowIter < size; rowIter++) {
-            if (tempMat[rowIter][0] == 0) {  //check first row for RED chips
+            if (tempMat[rowIter][0] == 0) {  //check first row for BLUE chips
                 tempMat[rowIter][0] = rowIter+1;
-                MarkNeighbors(tempMat, 0, rowIter);
+                MarkNeighbors(tempMat, rowIter, 0);
             }
         }
     }
@@ -451,43 +455,42 @@ bool HexBoard::EvaluateWin(HBPlayerElem player) {
         }
 
     }
-    //DEBUG!!!!!!!!!!!!!!!!!!!!
-    //string offset = "  ";
-    //for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
-    //    cout << endl;
-    //    //plot ". - . - . - "
-    //    for (int lOff = 0; lOff < outerIter; lOff++) {
-    //        cout << offset;
-    //    }
-    //    cout << " ";
-    //    cout << (tempMat[outerIter][0] > 0 ? tempMat[outerIter][0] : 0);
-    //    for (int iter = 1; iter < tempMat.size(); iter++) {
-    //        cout << " - " << (tempMat[outerIter][iter] > 0 ? tempMat[outerIter][iter] : 0);
-    //    }
-    //    cout << endl;
-    //    cout << offset;
-    //    //plot " \  /  \  / ..."
-    //    for (int lOff = 0; lOff < outerIter; lOff++) {
-    //        cout << offset;
-    //    }
-    //    if (outerIter < (graphMatrix.size() - 1)) {
-    //        cout << "\\ ";
-    //        for (int iter = 1; iter < graphMatrix.size(); iter++) {
-    //            cout << "/ \\ ";
-    //        }
-    //    }
-    //}
-    //cout << endl;
+
+    if (Enable_Debug_Print == true) {
+        string offset = "  ";
+        for (int outerIter = 0; outerIter < graphMatrix.size(); outerIter++) {
+            cout << endl;
+            //plot ". - . - . - "
+            for (int lOff = 0; lOff < outerIter; lOff++) {
+                cout << offset;
+            }
+            cout << " ";
+            cout << (tempMat[outerIter][0] > 0 ? tempMat[outerIter][0] : 0);
+            for (int iter = 1; iter < tempMat.size(); iter++) {
+                cout << " - " << (tempMat[outerIter][iter] > 0 ? tempMat[outerIter][iter] : 0);
+            }
+            cout << endl;
+            cout << offset;
+            //plot " \  /  \  / ..."
+            for (int lOff = 0; lOff < outerIter; lOff++) {
+                cout << offset;
+            }
+            if (outerIter < (graphMatrix.size() - 1)) {
+                cout << "\\ ";
+                for (int iter = 1; iter < graphMatrix.size(); iter++) {
+                    cout << "/ \\ ";
+                }
+            }
+        }
+        cout << endl;
+    }
 
     //print marked matrix
     return isWinning;
 }
 
+//alternative method to decide who's winning.
 void HexBoard::MarkNeighbors(std::vector< std::vector<int>> & matrix, int row, int col) {
-
-    if (row == 0 && col == 0) {
-        cout << "eval 00";
-    }
     //if top left element is zero, and neighboring, and not checked yet
     if ((row > 0) && (matrix[row - 1][col] == 0)) {
         matrix[row - 1][col] = matrix[row][col]; //mark it with same code...
